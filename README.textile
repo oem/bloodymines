@@ -1,0 +1,21 @@
+h1. bloodymines
+
+h2. A minesweeper clone done in ruby.
+
+Play minesweeper in your terminal!
+
+h3. Installation
+
+gem install bloodymines
+
+h3. Play
+
+open your terminal
+enter "bloodymines"
+enjoy
+
+h3. Keybindings
+
+Use the arrow keys to move your cursor around.
+Hit [space] to reveal a field.
+Q, q or [esc] will quit the game.
