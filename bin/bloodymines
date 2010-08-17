@@ -1,0 +1,140 @@
+#!/usr/bin/env ruby
+# bloodymines -- the executable terminal script for the bloody_mines gem
+require File.dirname(__FILE__) + "/../lib/minefield"
+require "curses"
+include Curses
+
+module Curses
+  def self.program
+    main_screen = init_screen   # init curses
+    noecho                      # don't show what you type
+    trap(0) { echo }            # reactivate echo on exit
+    cbreak                      # turn off buffered input
+    curs_set(0)                 # hide cursor
+    main_screen.keypad = true   # cursor keys are real events
+    yield main_screen
+  end
+end
+
+class Game
+  attr_accessor :cursor_x, :cursor_y
+  attr_reader :mines, :x_max, :y_max
+  def initialize(space = 1, x_offset = 1, y_offset = 1)
+    @space, @x_offset, @y_offset = space, x_offset, y_offset
+    @cursor_x, @cursor_y = 0, 0
+
+    puts "Welcome to bloody mines!"
+    print "Select your difficulty: [1]beginner, [2]intermediate, [3]expert => "
+    difficulty = gets.chomp.to_i
+    difficulty = case difficulty
+                 when 2: :intermediate
+                 when 3: :expert
+                 else :beginner
+                 end
+    @mines = MineField.new(:difficulty => difficulty)
+    @x_max = @mines.fields.size - 1
+    @y_max = @mines.fields[0].size - 1
+  end
+
+  def score
+    score = 0
+    @mines.fields.each do |rows|
+      rows.each do |cell|
+        score += cell if cell.kind_of?(Integer)
+      end
+    end
+    score
+  end
+
+  def draw_field
+    clear
+    0.upto(@x_max) do |x|
+      0.upto(@y_max) do |y|
+        # curses swaps x and y
+        setpos(y + @y_offset, x + @x_offset + spacing(x, @space))
+        field = case @mines.fields[x][y]
+                when false, :mine: "."
+                when :boom: "X"
+                else @mines.fields[x][y].to_s
+                end
+        addstr(field)
+      end
+    end
+    draw_cursor
+    setpos(0, 1)
+    addstr("Score: #{score}")
+    setpos(@y_max + 3, 1)
+    addstr("Use the arrow keys to move around.\n Hit Space to reveal a field. Q or ESC quits the game.")
+    refresh
+  end
+
+  def spacing(x, space)
+    x * space
+  end
+
+  def draw_cursor
+    x = @cursor_x + @x_offset + spacing(@cursor_x, @space)
+    y = @cursor_y + @y_offset
+    setpos(y, x - 1)
+    addstr("[")
+    setpos(y, x + 1)
+    addstr("]")
+  end
+
+  def move(params={})
+    case params[:direction]
+    when :up
+      @cursor_y -= 1 if @cursor_y > 0
+    when :down
+      @cursor_y += 1 if @cursor_y < @y_max
+    when :left
+      @cursor_x -= 1 if @cursor_x > 0
+    when :right
+      @cursor_x += 1 if @cursor_x < @x_max
+    end
+  end
+
+  def ended?
+    uncovered = 0
+    @mines.fields.each do |rows|
+      rows.each do |cell|
+        uncovered += 1 if cell == false
+        return true if cell == :boom
+      end
+    end
+    return false if uncovered > 0
+    true
+  end
+end
+
+# curses app
+game = Game.new
+
+Curses.program do |scr|
+  while true
+    game.draw_field
+    case getch
+    when Key::UP
+      game.move(:direction => :up, :type => :movement)
+    when Key::DOWN
+      game.move(:direction => :down, :type => :movement)
+    when Key::LEFT
+      game.move(:direction => :left, :type => :movement)
+    when Key::RIGHT
+      game.move(:direction => :right, :type => :movement)
+    when 32
+      game.mines.uncover_field(game.cursor_x, game.cursor_y)
+    when 27, ?q, ?Q
+      break
+    end
+    if game.ended?
+      game.draw_field
+      setpos(0, 1)
+      addstr("Game Over. Hit any key to quit.")
+      getch
+      break
+    end
+  end
+ close_screen
+ puts "Your final score was: #{game.score}"
+end
