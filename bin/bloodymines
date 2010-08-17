@@ -114,18 +114,12 @@ Curses.program do |scr|
   while true
     game.draw_field
     case getch
-    when Key::UP
-      game.move(:direction => :up, :type => :movement)
-    when Key::DOWN
-      game.move(:direction => :down, :type => :movement)
-    when Key::LEFT
-      game.move(:direction => :left, :type => :movement)
-    when Key::RIGHT
-      game.move(:direction => :right, :type => :movement)
-    when 32
-      game.mines.uncover_field(game.cursor_x, game.cursor_y)
-    when 27, ?q, ?Q
-      break
+    when Key::UP : game.move(:direction => :up)
+    when Key::DOWN : game.move(:direction => :down)
+    when Key::LEFT : game.move(:direction => :left)
+    when Key::RIGHT : game.move(:direction => :right)
+    when 32 : game.mines.uncover_field(game.cursor_x, game.cursor_y)
+    when 27, ?q, ?Q : break
     end
     if game.ended?
       game.draw_field
