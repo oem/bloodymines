@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# bloodymines -- the executable terminal script for the bloody_mines gem
+# bloodymines -- the executable terminal script for the bloodymines gem
 require File.dirname(__FILE__) + "/../lib/minefield"
 require "curses"
 include Curses
