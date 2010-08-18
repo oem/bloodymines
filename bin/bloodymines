@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
-# bloodymines -- the executable terminal script for the bloodymines gem
-require File.dirname(__FILE__) + "/../lib/minefield"
+# An example of how to use the bloodymines game egnine within a curses program.
+
+require File.dirname(__FILE__) + "/../lib/bloodymines"
 require "curses"
 include Curses
 
@@ -16,46 +17,22 @@ module Curses
   end
 end
 
-class Game
+# Here I will extend the Bloodymines class with the displaying methods for a
+# text UI
+class Bloodymines
+  SPACING, X_OFFSET, Y_OFFSET = 1, 1, 1
   attr_accessor :cursor_x, :cursor_y
-  attr_reader :mines, :x_max, :y_max
-  def initialize(space = 1, x_offset = 1, y_offset = 1)
-    @space, @x_offset, @y_offset = space, x_offset, y_offset
-    @cursor_x, @cursor_y = 0, 0
-
-    puts "Welcome to bloody mines!"
-    print "Select your difficulty: [1]beginner, [2]intermediate, [3]expert => "
-    difficulty = gets.chomp.to_i
-    difficulty = case difficulty
-                 when 2: :intermediate
-                 when 3: :expert
-                 else :beginner
-                 end
-    @mines = MineField.new(:difficulty => difficulty)
-    @x_max = @mines.fields.size - 1
-    @y_max = @mines.fields[0].size - 1
-  end
-
-  def score
-    score = 0
-    @mines.fields.each do |rows|
-      rows.each do |cell|
-        score += cell if cell.kind_of?(Integer)
-      end
-    end
-    score
-  end
 
   def draw_field
     clear
-    0.upto(@x_max) do |x|
-      0.upto(@y_max) do |y|
+    0.upto(@width - 1) do |x|
+      0.upto(@height - 1) do |y|
         # curses swaps x and y
-        setpos(y + @y_offset, x + @x_offset + spacing(x, @space))
-        field = case @mines.fields[x][y]
+        setpos(y + Y_OFFSET, x + X_OFFSET + spacing(x, SPACING))
+        field = case @minefield.fields[x][y]
                 when false, :mine: "."
                 when :boom: "X"
-                else @mines.fields[x][y].to_s
+                else @minefield.fields[x][y].to_s
                 end
         addstr(field)
       end
@@ -63,7 +40,7 @@ class Game
     draw_cursor
     setpos(0, 1)
     addstr("Score: #{score}")
-    setpos(@y_max + 3, 1)
+    setpos(@height + 2, 1)
     addstr("Use the arrow keys to move around.\n Hit Space to reveal a field. Q or ESC quits the game.")
     refresh
   end
@@ -73,8 +50,8 @@ class Game
   end
 
   def draw_cursor
-    x = @cursor_x + @x_offset + spacing(@cursor_x, @space)
-    y = @cursor_y + @y_offset
+    x = @cursor_x + X_OFFSET + spacing(@cursor_x, SPACING)
+    y = @cursor_y + Y_OFFSET
     setpos(y, x - 1)
     addstr("[")
     setpos(y, x + 1)
@@ -86,29 +63,27 @@ class Game
     when :up
       @cursor_y -= 1 if @cursor_y > 0
     when :down
-      @cursor_y += 1 if @cursor_y < @y_max
+      @cursor_y += 1 if @cursor_y < @height - 1
     when :left
       @cursor_x -= 1 if @cursor_x > 0
     when :right
-      @cursor_x += 1 if @cursor_x < @x_max
+      @cursor_x += 1 if @cursor_x < @width - 1
     end
-  end
-
-  def ended?
-    uncovered = 0
-    @mines.fields.each do |rows|
-      rows.each do |cell|
-        uncovered += 1 if cell == false
-        return true if cell == :boom
-      end
-    end
-    return false if uncovered > 0
-    true
   end
 end
 
-# curses app
-game = Game.new
+# main app
+puts "Welcome to bloodymines!"
+print "Choose your difficulty: [1]Beginner, [2]Intermediate, [3]Expert > "
+
+case gets.chomp.to_i
+when 2: game = Bloodymines.new(:difficulty => :intermediate)
+when 3: game = Bloodymines.new(:difficulty => :expert)
+else game = Bloodymines.new
+end
+
+game.cursor_x = 0
+game.cursor_y = 0
 
 Curses.program do |scr|
   while true
@@ -118,7 +93,7 @@ Curses.program do |scr|
     when Key::DOWN : game.move(:direction => :down)
     when Key::LEFT : game.move(:direction => :left)
     when Key::RIGHT : game.move(:direction => :right)
-    when 32 : game.mines.uncover_field(game.cursor_x, game.cursor_y)
+    when 32 : game.uncover(game.cursor_x, game.cursor_y)
     when 27, ?q, ?Q : break
     end
     if game.ended?
@@ -129,6 +104,7 @@ Curses.program do |scr|
       break
     end
   end
+
  close_screen
  puts "Your final score was: #{game.score}"
 end

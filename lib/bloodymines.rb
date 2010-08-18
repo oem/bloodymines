@@ -1,4 +1,4 @@
-require "minefield"
+require File.dirname(__FILE__) + "/minefield"
 
 class Bloodymines
   attr_reader :minefield, :x_max, :y_max
@@ -39,5 +39,4 @@ class Bloodymines
     return false if uncovered > 0
     true
   end
-
 end
