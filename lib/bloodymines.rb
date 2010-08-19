@@ -17,14 +17,16 @@ class Bloodymines
     @minefield.difficulty
   end
 
-  def score
+  def result
     score = 0
+    finished = true
     @minefield.fields.each do |rows|
       rows.each do |cell|
         score += cell if cell.kind_of?(Integer)
+        finished = false if cell == false || cell == :boom
       end
     end
-    score
+    {:score => score, :finished => finished}
   end
 
   # returns true if you triggered a mine or uncovered all save fields
