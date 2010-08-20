@@ -9,7 +9,7 @@ class Bloodymines
   include TUI
 end
 
-# main app
+# parse command line options
 options = {}
 optparse = OptionParser.new do |opts|
   opts.on('-h','--help', 'display this screen') { puts opts; exit }
@@ -27,9 +27,8 @@ rescue OptionParser::MissingArgument, OptionParser::InvalidArgument
   exit
 end
 
+# start game as curses app
 game = Bloodymines.new(:difficulty => options[:difficulty])
-game.cursor_x = 0
-game.cursor_y = 0
 
 Curses.program do |scr|
   while true

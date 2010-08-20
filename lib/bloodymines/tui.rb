@@ -18,6 +18,8 @@ module TUI
   attr_accessor :cursor_x, :cursor_y
 
   def draw_field
+    @cursor_x = @cursor_x || 0
+    @cursor_y = @cursor_y || 0
     clear
     0.upto(@width - 1) do |x|
       0.upto(@height - 1) do |y|
