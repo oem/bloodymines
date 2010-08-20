@@ -25,7 +25,7 @@ Q, q or [esc] will quit the game.
 h2. Using the bloodymines gem within your own interface/program
 
 require "bloodymines"
-game = Bloodymines.new(:difficulty => :expert)
+game = Bloodymines.new(:difficulty => :expert) # valid difficulties are :beginner, :intermediate and :expert
 
 h3. The Bloodymines class provides following methods:
 
