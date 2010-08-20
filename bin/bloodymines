@@ -2,10 +2,8 @@
 # An example of how to use the bloodymines game egnine within a curses program.
 
 require File.dirname(__FILE__) + "/../lib/bloodymines"
-require File.dirname(__FILE__) + "/../lib/tui"
+require File.dirname(__FILE__) + "/../lib/bloodymines/tui"
 
-# Here I will extend the Bloodymines class with the displaying methods for a
-# text UI
 class Bloodymines
   include TUI
 end

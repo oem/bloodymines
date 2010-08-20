@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/minefield"
 
 class Bloodymines
-  attr_reader :minefield, :x_max, :y_max
+  attr_reader :minefield, :width, :height
   def initialize(params={})
     params = { :difficulty => :beginner }.merge params
     @minefield = MineField.new(:difficulty => params[:difficulty])

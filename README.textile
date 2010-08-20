@@ -19,3 +19,17 @@ h3. Keybindings
 Use the arrow keys to move your cursor around.
 Hit [space] to reveal a field.
 Q, q or [esc] will quit the game.
+
+h2. Using the bloodymines gem within your own interface/program
+
+require "bloodymines"
+game = Bloodymines.new(:difficulty => :expert)
+
+The Bloodymines class provides following methods:
+uncover(x, y) => oncovers the field at x, y
+difficulty => difficulty of the game (:beginner, :intermediate, :expert)
+width => width of the minefield
+height => height of the minefield
+result => returns a hash {:score => Integer, :finished => Boolean}
+ended? => returns true if the game is over, else false
+minefield.fields => a 2d Array. minefield.fields[x][y] to get a field.

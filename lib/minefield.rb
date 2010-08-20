@@ -1,5 +1,5 @@
 class MineField
-  attr_accessor :fields, :difficulty
+  attr_reader :fields, :difficulty
 
   BEGINNER_WIDTH, BEGINNER_HEIGHT, BEGINNER_MINES = 8, 8, 10
   INTERMEDIATE_WIDTH, INTERMEDIATE_HEIGHT, INTERMEDIATE_MINES = 16, 16, 40
