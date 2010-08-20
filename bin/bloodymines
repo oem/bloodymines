@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # An example of how to use the bloodymines game egnine within a curses program.
 
+require "optparse"
 require File.dirname(__FILE__) + "/../lib/bloodymines"
 require File.dirname(__FILE__) + "/../lib/bloodymines/tui"
 
@@ -9,15 +10,24 @@ class Bloodymines
 end
 
 # main app
-puts "Welcome to bloodymines!"
-print "Choose your difficulty: [1]Beginner, [2]Intermediate, [3]Expert > "
-
-case gets.chomp.to_i
-when 2: game = Bloodymines.new(:difficulty => :intermediate)
-when 3: game = Bloodymines.new(:difficulty => :expert)
-else game = Bloodymines.new
+options = {}
+optparse = OptionParser.new do |opts|
+  opts.on('-h','--help', 'display this screen') { puts opts; exit }
+  opts.on('-d', '--difficulty DIFFICULTY', [:beginner, :intermediate, :expert],
+          "Set the difficulty of the game") do |d|
+            options[:difficulty] = d
+          end
 end
 
+begin
+  optparse.parse!
+rescue OptionParser::MissingArgument, OptionParser::InvalidArgument
+  puts "The following difficulty levels are available: beginner, intermediate, expert"
+  puts optparse
+  exit
+end
+
+game = Bloodymines.new(:difficulty => options[:difficulty])
 game.cursor_x = 0
 game.cursor_y = 0
 

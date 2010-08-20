@@ -13,6 +13,8 @@ h3. Play
 open your terminal
 enter "bloodymines"
 enjoy
+For _more_ help:
+bloodymines -h
 
 h3. Keybindings
 
