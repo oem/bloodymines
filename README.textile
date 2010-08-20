@@ -28,6 +28,7 @@ require "bloodymines"
 game = Bloodymines.new(:difficulty => :expert)
 
 h3. The Bloodymines class provides following methods:
+
 uncover(x, y) => oncovers the field at x, y
 difficulty => difficulty of the game (:beginner, :intermediate, :expert)
 width => width of the minefield
