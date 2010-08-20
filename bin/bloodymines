@@ -14,15 +14,14 @@ options = {}
 optparse = OptionParser.new do |opts|
   opts.on('-h','--help', 'display this screen') { puts opts; exit }
   opts.on('-d', '--difficulty DIFFICULTY', [:beginner, :intermediate, :expert],
-          "Set the difficulty of the game") do |d|
-            options[:difficulty] = d
+          "beginner, intermediate or expert") do |d|
+    options[:difficulty] = d
           end
 end
 
 begin
   optparse.parse!
 rescue OptionParser::MissingArgument, OptionParser::InvalidArgument
-  puts "The following difficulty levels are available: beginner, intermediate, expert"
   puts optparse
   exit
 end
@@ -32,15 +31,7 @@ game = Bloodymines.new(:difficulty => options[:difficulty])
 
 Curses.program do |scr|
   while true
-    game.draw_field
-    case getch
-    when Key::UP : game.move(:direction => :up)
-    when Key::DOWN : game.move(:direction => :down)
-    when Key::LEFT : game.move(:direction => :left)
-    when Key::RIGHT : game.move(:direction => :right)
-    when 32 : game.uncover(game.cursor_x, game.cursor_y)
-    when 27, ?q, ?Q : break
-    end
+    game.turn
     if game.ended?
       game.draw_field
       setpos(0, 1)
@@ -50,11 +41,11 @@ Curses.program do |scr|
     end
   end
 
- close_screen
- if game.result[:finished]
-   puts "You completed the game on #{game.difficulty.to_s.upcase}!"
- else
-   puts "You did not manage to finish the game."
- end
- puts "Your final score was: #{game.result[:score]}"
+  close_screen
+  if game.result[:finished]
+    puts "You completed the game on #{game.difficulty.to_s.upcase}!"
+  else
+    puts "You did not manage to finish the game."
+  end
+  puts "Your final score was: #{game.result[:score]}"
 end

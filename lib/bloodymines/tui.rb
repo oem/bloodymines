@@ -66,4 +66,17 @@ module TUI
       @cursor_x += 1 if @cursor_x < @width - 1
     end
   end
+
+  def turn
+    draw_field
+    case getch
+    when Key::UP : move(:direction => :up)
+    when Key::DOWN : move(:direction => :down)
+    when Key::LEFT : move(:direction => :left)
+    when Key::RIGHT : move(:direction => :right)
+    when 32 : uncover(@cursor_x, @cursor_y)
+    when 27, ?q, ?Q : break
+    end
+    
+  end
 end
