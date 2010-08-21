@@ -29,7 +29,7 @@ class Bloodymines
     {:score => score, :finished => finished}
   end
 
-  # returns true if you triggered a mine or uncovered all save fields
+  # returns true if you triggered a mine or uncovered all safe fields
   def ended?
     uncovered = 0
     @minefield.fields.each do |rows|

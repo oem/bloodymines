@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# An example of how to use the bloodymines game egnine within a curses program.
+# An example of how to use the bloodymines game-engine within a curses program.
 
 require "optparse"
 require File.dirname(__FILE__) + "/../lib/bloodymines"

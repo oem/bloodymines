@@ -29,7 +29,7 @@ game = Bloodymines.new(:difficulty => :expert) # valid difficulties are :beginne
 
 h3. The Bloodymines class provides following methods:
 
-uncover(x, y) => oncovers the field at x, y
+uncover(x, y) => uncovers the field at x, y
 difficulty => difficulty of the game (:beginner, :intermediate, :expert)
 width => width of the minefield
 height => height of the minefield
