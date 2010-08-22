@@ -31,7 +31,7 @@ game = Bloodymines.new(:difficulty => options[:difficulty])
 
 Curses.program do |scr|
   while true
-    game.turn
+    break if game.turn
     if game.ended?
       game.draw_field
       setpos(0, 1)
@@ -45,7 +45,7 @@ Curses.program do |scr|
   if game.result[:finished]
     puts "You completed the game on #{game.difficulty.to_s.upcase}!"
   else
-    puts "You did not manage to finish the game."
+    puts "You did not manage to finish this game on #{game.difficulty.to_s.upcase}."
   end
   puts "Your final score was: #{game.result[:score]}"
 end

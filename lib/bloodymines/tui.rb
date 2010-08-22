@@ -68,6 +68,7 @@ module TUI
   end
 
   def turn
+    exit_flag = false
     draw_field
     case getch
     when Key::UP : move(:direction => :up)
@@ -75,8 +76,9 @@ module TUI
     when Key::LEFT : move(:direction => :left)
     when Key::RIGHT : move(:direction => :right)
     when 32 : uncover(@cursor_x, @cursor_y)
-    when 27, ?q, ?Q : break
+    when 27, ?q, ?Q : exit_flag = true
     end
+    return exit_flag
     
   end
 end

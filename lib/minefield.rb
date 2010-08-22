@@ -7,7 +7,7 @@ class MineField
 
   def initialize(params={})
     params = { :difficulty => :beginner }.merge params
-    @difficulty = params[:difficulty]
+    @difficulty = params[:difficulty] || :beginner
     case @difficulty
     when :intermediate: @fields = create_fields(INTERMEDIATE_WIDTH, INTERMEDIATE_HEIGHT, INTERMEDIATE_MINES)
     when :expert: @fields = create_fields( EXPERT_WIDTH, EXPERT_HEIGHT, EXPERT_MINES)
